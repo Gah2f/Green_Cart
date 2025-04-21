@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&family=Rajdhani:wght@300;400;500;600;700&family=Rubik:ital,wght@0,300..900;1,300..900&family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap');
+
+
+@import "tailwindcss";
+
+@custom-variant hover (&:hover);
+
+
+* {
+    font-family: "Outfit", sans-serif;
+}
+
+@theme {
+    --color-primary: #4fbf8b;
+    --color-primary-dull: #44ae7c;
+}
