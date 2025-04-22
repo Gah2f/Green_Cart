@@ -102,7 +102,7 @@ function Cart() {
               </div>
             </div>
             <p className="text-center">
-              {currency} $ {product.offerPrice * product.quantity}
+              {currency}  {product.offerPrice * product.quantity}
             </p>
             <button
               onClick={() => removeFromCart(product._id)}
@@ -200,7 +200,7 @@ function Cart() {
             <span>Price</span>
             <span>
               {" "}
-              {currency} $ {getCartAmount()}
+              {currency}  {getCartAmount()}
             </span>
           </p>
           <p className="flex justify-between">
@@ -212,13 +212,13 @@ function Cart() {
               Tax (2%) :
             </span>
             <span>
-              {currency} $ {(getCartAmount() * 2) / 100}
+              {currency}  {(getCartAmount() * 2) / 100}
             </span>
           </p>
           <p className="flex justify-between text-lg font-medium mt-3">
             <span>Total Amount:</span>
             <span>
-              {currency} $ {getCartAmount() + (getCartAmount() * 2) / 100}
+              {currency}  {getCartAmount() + (getCartAmount() * 2) / 100}
             </span>
           </p>
         </div>
