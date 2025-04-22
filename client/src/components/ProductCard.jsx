@@ -33,9 +33,9 @@ function ProductCard({ product }) {
         </div>
         <div className="flex items-end justify-between mt-3">
           <p className="md:text-xl text-base font-medium text-primary">
-           {currency} ${product.offerPrice}{" "}
+           {currency} {product.offerPrice}{" "}
             <span className="text-gray-500/60 md:text-sm text-xs line-through">
-              ${product.price}
+              {currency} {product.price}
             </span>
           </p>
           <div onClick={(e) => {e.stopPropagation()}} className="text-primary">
