@@ -1,92 +1,126 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { dummyProducts } from '../assets/greencart_assets/assets'
+import { dummyProducts } from "../assets/greencart_assets/assets";
 export const AppContext = createContext();
-import toast from 'react-hot-toast'
+import toast from "react-hot-toast";
+import axios from "axios";
 
-export const AppContextProvider = ({children})=>{
-    const currency = import.meta.env.VITE_CURRENCY;
-    const navigate = useNavigate();
-    const [user,setUser] = useState(null);
-    const [isSeller, setIsSeller] = useState(false);
-    const [showUserLogin, setShowUserLogin] = useState(false);
-    const [products, setProduct] = useState([]);
-    const [cartItems, setCartItems] = useState({});
-    const [searchQuery, setSearchQuery] = useState({});
+// Base URL for axios requests
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
+// Set withCredentials to true for cross-origin requests
+axios.defaults.withCredentials = true;
 
-    const getCartCount = ()=> {
-        let totalCount = 0;
+export const AppContextProvider = ({ children }) => {
+  const currency = import.meta.env.VITE_CURRENCY;
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [isSeller, setIsSeller] = useState(false);
+  const [showUserLogin, setShowUserLogin] = useState(false);
+  const [products, setProduct] = useState([]);
+  const [cartItems, setCartItems] = useState({});
+  const [searchQuery, setSearchQuery] = useState({});
 
-        for (const item in cartItems) {
-            totalCount += cartItems[item];
+  const fetchSeller = async () => {
+    try {
+      const { data } = await axios.get("/api/seller/is-auth");
 
-        }
-        return totalCount;
+      if (data.success) {
+        setIsSeller(true);
+      } else {
+        setIsSeller(false);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const getCartCount = () => {
+    let totalCount = 0;
+
+    for (const item in cartItems) {
+      totalCount += cartItems[item];
+    }
+    return totalCount;
+  };
+
+  const getCartAmount = () => {
+    let totalAmount = 0;
+
+    for (const items in cartItems) {
+      let itemInfo = products.find(
+        (singleProduct) => singleProduct._id === items
+      );
+
+      if (cartItems[items] > 0) {
+        totalAmount += itemInfo.offerPrice * cartItems[items];
+      }
     }
 
-    const getCartAmount = ()=> {
-        let totalAmount = 0;
-        
-        for (const items in cartItems) {
-            let itemInfo = products.find((singleProduct)=> singleProduct._id === items);
+    return Math.floor(totalAmount * 100) / 100;
+  };
 
-            if(cartItems[items] > 0) {
-                totalAmount += itemInfo.offerPrice * cartItems[items];
-            }
+  const fetchProduct = async () => {
+    setProduct(dummyProducts);
+  };
 
-        }
-
-        return Math.floor(totalAmount * 100) / 100;
-
+  const addToCart = (itemId) => {
+    let cartData = structuredClone(cartItems);
+    if (cartData[itemId]) {
+      cartData[itemId] += 1;
+    } else {
+      cartData[itemId] = 1;
     }
+    setCartItems(cartData);
+    toast.success("Added to cart");
+  };
 
-    const fetchProduct = async ()=>{
-        setProduct(dummyProducts);
+  const updateCartItem = (itemId, quantity) => {
+    let cartData = structuredClone(cartItems);
+    cartData[itemId] = quantity;
+    setCartItems(cartData);
+    toast.success("Card Updated");
+  };
+
+  const removeFromCart = (itemId) => {
+    let cartData = structuredClone(cartItems);
+    if (cartData[itemId]) {
+      cartData[itemId] -= 1;
+      if (cartData[itemId] === 0) {
+        delete cartData[itemId];
+      }
     }
+    toast.success("Removed from cart");
+    setCartItems(cartData);
+  };
 
-    const addToCart = (itemId)=> {
-        let cartData = structuredClone(cartItems);
-        if (cartData[itemId]) {
-            cartData[itemId] += 1;
-        } else {
-            cartData[itemId] = 1;
-        }
-        setCartItems(cartData);
-        toast.success("Added to cart")
-    }
+  useEffect(() => {
+    fetchSeller();
+    fetchProduct();
+  }, []);
 
-    const updateCartItem = (itemId, quantity)=> {
-        let cartData = structuredClone(cartItems);
-        cartData[itemId] = quantity;
-        setCartItems(cartData);
-        toast.success("Card Updated");
+  const value = {
+    navigate,
+    user,
+    setUser,
+    isSeller,
+    setIsSeller,
+    showUserLogin,
+    setShowUserLogin,
+    products,
+    currency,
+    addToCart,
+    updateCartItem,
+    removeFromCart,
+    cartItems,
+    searchQuery,
+    setSearchQuery,
+    getCartCount,
+    getCartAmount,
+    axios,
+  };
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+};
 
-    }
-
-    const removeFromCart = (itemId)=>{
-        let cartData = structuredClone(cartItems);
-        if (cartData[itemId]) {
-            cartData[itemId] -= 1;
-            if (cartData[itemId] === 0) {
-                delete cartData[itemId];
-            }
-        }
-        toast.success("Removed from cart");
-        setCartItems(cartData);
-    }
-
-    useEffect(()=>{
-        fetchProduct();
-    },[])
-
-    const value= {navigate, user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, products, currency, addToCart, updateCartItem, removeFromCart, cartItems, searchQuery, setSearchQuery, getCartCount, getCartAmount};
-    return  <AppContext.Provider value={value}>
-        {children}
-    </AppContext.Provider>
-}
-
-export const useAppContext = ()=>{
-    return(useContext(AppContext));
-}
-
- 
+export const useAppContext = () => {
+  return useContext(AppContext);
+};

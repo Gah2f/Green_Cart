@@ -2,10 +2,11 @@ import React from 'react'
 import { useAppContext } from '../../context/AppContext';
 import { assets } from '../../assets/greencart_assets/assets';
 import { Link , NavLink, Outlet } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 function SellerLayout() {
 
-    const { setIsSeller } = useAppContext();
+    const { axios, navigate } = useAppContext();
    
 
     const sidebarLinks = [
@@ -14,7 +15,18 @@ function SellerLayout() {
         { name: "Orders", path: "/seller/orders", icon: assets.order_icon },
     ];
     const logout = async ()=> {
-        setIsSeller(false);
+        try {
+            const { data } = await axios.get('/api/seller/logout');
+            if (data.success) {
+            navigate('/');
+            } else {
+                toast.error(data.message);
+            }
+
+        } catch (error) {
+            console.log(error.message);
+            toast.error("Something went wrong, please try again later.");
+        }
     }
 
   return (
@@ -25,7 +37,7 @@ function SellerLayout() {
         </Link>
         <div className="flex items-center gap-5 text-gray-500">
             <p>Hi! Admin</p>
-            <button onClick={logout} className='border rounded-full text-sm px-4 py-1'>Logout</button>
+            <button onClick={logout} className='border rounded-full text-sm px-4 py-1 hover:bg-gray-100/90 cursor-pointer'>Logout</button>
         </div>
     </div>
 
