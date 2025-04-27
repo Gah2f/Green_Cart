@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { assets, categories } from "../../assets/greencart_assets/assets";
 import { useAppContext } from "../../context/AppContext";
+import toast from "react-hot-toast";
 
 function AddProduct() {
   const [files, setFiles] = useState([]);
@@ -18,16 +19,35 @@ function AddProduct() {
       const productData = {
         name,
         description: description.split("\n"),
-        category,
+        category: [category],
         price,
         offerPrice,
-      }; 
+      };
 
       const formData = new FormData();
 
-      formData.append('productData', JSON.stringify(productData));
-      
-    } catch (error) {}
+      formData.append("productData", JSON.stringify(productData));
+      for (let i = 0; i < files.length; i++) {
+        formData.append("images", files[i]);
+      }
+
+      const { data } = await axios.post("/api/product/add", formData);
+      console.log("response:", data);
+      if (data.success) {
+        toast.success("Product added successfully");
+        setName("");
+        setDescription("");
+        setCategory("");
+        setPrice("");
+        setOfferPrice("");
+        setFiles([]);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+      toast.error("Something went wrong, please try again later.");
+    }
   };
 
   return (
