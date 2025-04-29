@@ -141,7 +141,7 @@ export const stripeWebhooks = async (req,res)=>{
       }) 
       const {orderId, userId}= session.data[0].metadata; 
 
-      await Order.findByIdAndUpdate(orderId, {ispaid: true})
+      await Order.findByIdAndUpdate(orderId, {isPaid: true})
       await User.findByIdAndUpdate(userId, {cartItems: {}})
       break;
 
