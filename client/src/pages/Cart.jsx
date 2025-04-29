@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
-import { assets, dummyAddress } from "../assets/greencart_assets/assets";
+import toast from "react-hot-toast";
+import { assets } from "../assets/greencart_assets/assets";
 
 function Cart() {
   const [showAddress, setShowAddress] = useState(false);
   const [cartArray, setCartArray] = useState([]);
-  const [addresses, setAddresses] = useState(dummyAddress);
-  const [selectedAddress, setSelectedAddress] = useState(dummyAddress[0]);
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
   const [paymentOption, setPaymentOption] = useState("COD");
   const {
     getCartCount,
@@ -17,7 +18,11 @@ function Cart() {
     updateCartItem,
     navigate,
     getCartAmount,
+    axios,
+    user,
+    setCartItems,
   } = useAppContext();
+
   const getCart = () => {
     let tempArray = [];
     for (const key in cartItems) {
@@ -29,13 +34,64 @@ function Cart() {
     setCartArray(tempArray);
   };
 
-  const placeOrder = async () => {};
+  const fetchAddresses = async () => {
+    try {
+      const { data } = await axios.get("/api/address/get");
+
+      if (data.success) {
+        setAddresses(data.addresses);
+        if (data.addresses.length > 0) {
+          setSelectedAddress(data.addresses[0]);
+        }
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+      toast.error("Something went wrong, please try again later.");
+    }
+  };
+
+  const placeOrder = async () => {
+    try {
+      if(!selectedAddress) {
+        toast.error("Please select an address.");
+        return;
+      } 
+
+      if (paymentOption === 'COD') {
+        const { data } = await axios.post("/api/order/cod",{
+          userId: user._id,
+          items: cartArray.map((item)=>({product: item._id, quantity: item.quantity})),
+          address: selectedAddress._id,
+        })
+
+        if (data.success) {
+          toast.success(data.message);
+          setCartItems({});
+          console.log(data);
+          navigate("/my-orders");
+        } else {
+          toast.error(data.message);
+        }
+      }
+    } catch (error) {
+      console.log(error.message);
+      toast.error("Something went wrong, please try again later.");
+    }
+  };
 
   useEffect(() => {
     if (products.length > 0 && cartItems) {
       getCart();
     }
   }, [products, cartItems]);
+
+  useEffect(() => {
+    if (user) {
+      fetchAddresses();
+    }
+  }, [user]);
 
   return products.length > 0 && cartItems ? (
     <div className="flex flex-col md:flex-row mt-16">
@@ -102,7 +158,7 @@ function Cart() {
               </div>
             </div>
             <p className="text-center">
-              {currency}  {product.offerPrice * product.quantity}
+              {currency} {product.offerPrice * product.quantity}
             </p>
             <button
               onClick={() => removeFromCart(product._id)}
@@ -149,12 +205,12 @@ function Cart() {
             </p>
             <button
               onClick={() => setShowAddress(!showAddress)}
-              className="text-primary hover:underline cursor-pointer"
+              className="hover:underline text-primary  cursor-pointer"
             >
               Change
             </button>
             {showAddress && (
-              <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full">
+              <div className="absolute top-8 py-1 bg-white border border-gray-300 text-sm w-full">
                 {addresses.map((address, index) => (
                   <p
                     key={index}
@@ -200,7 +256,7 @@ function Cart() {
             <span>Price</span>
             <span>
               {" "}
-              {currency}  {getCartAmount()}
+              {currency} {getCartAmount()}
             </span>
           </p>
           <p className="flex justify-between">
@@ -208,17 +264,15 @@ function Cart() {
             <span className="text-green-600">Free</span>
           </p>
           <p className="flex justify-between">
+            <span>Tax (2%) :</span>
             <span>
-              Tax (2%) :
-            </span>
-            <span>
-              {currency}  {(getCartAmount() * 2) / 100}
+              {currency} {(getCartAmount() * 2) / 100}
             </span>
           </p>
           <p className="flex justify-between text-lg font-medium mt-3">
             <span>Total Amount:</span>
             <span>
-              {currency}  {getCartAmount() + (getCartAmount() * 2) / 100}
+              {currency} {getCartAmount() + (getCartAmount() * 2) / 100}
             </span>
           </p>
         </div>

@@ -124,6 +124,24 @@ export const AppContextProvider = ({ children }) => {
     fetchProducts();
   }, []);
 
+  useEffect(()=>{
+    const updateCart = async ()=>{
+      try {
+        const { data } = await axios.post("/api/cart/update", {cartItems})
+
+        if (!data.success) {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        console.log(error.message);
+        toast.error("Something went wrong, please try again later.");
+      }
+    }
+    if (user) {
+      updateCart();
+    }
+  },[cartItems])
+
   const value = {
     navigate,
     user,
@@ -144,6 +162,7 @@ export const AppContextProvider = ({ children }) => {
     getCartAmount,
     axios,
     fetchProducts,
+    setCartItems,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

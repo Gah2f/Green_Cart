@@ -1,16 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../../context/AppContext";
 import { assets, dummyOrders } from "../../assets/greencart_assets/assets";
+import toast from "react-hot-toast";
 
 function Orders() {
-  const { currency } = useAppContext();
+  const { currency, axios } = useAppContext();
   const [orders, setOrders] = useState([]);
 
   const fetchOrders = async () => {
-    setOrders(dummyOrders);
+    try {
+      const { data } = await axios.get('/api/order/seller');
+      if(data.success) {
+        setOrders(data.orders);
+      } else {
+        toast.error(error.message)
+      }
+    } catch (error) {
+      console.log(error.message);
+      toast.error('Something went wrong, try again later.')
+    }
   };
 
   useEffect(() => {
+
     fetchOrders();
   }, []);
   return (

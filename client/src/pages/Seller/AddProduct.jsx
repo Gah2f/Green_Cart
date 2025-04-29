@@ -19,7 +19,7 @@ function AddProduct() {
       const productData = {
         name,
         description: description.split("\n"),
-        category: [category],
+        category,
         price,
         offerPrice,
       };
