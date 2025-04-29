@@ -117,12 +117,12 @@ export const placeOrderStripe = async (req, res) => {
 
 export const stripeWebhooks = async (req,res)=>{
   const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
-  const sig = request.headers['stripe-signature'];
+  const sig = req.headers['stripe-signature'];
 
   let event;
   try {
     event = stripeInstance.webhooks.constructEvent(
-      request.body,
+      req.body,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
     );
@@ -137,6 +137,7 @@ export const stripeWebhooks = async (req,res)=>{
 
       const session = await stripeInstance.checkout.sessions.list({
         payment_intent: paymentIntentId,
+        limit:1,
       }) 
       const {orderId, userId}= session.data[0].metadata; 
 
