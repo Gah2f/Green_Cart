@@ -93,7 +93,7 @@ export const login = async (req, res) => {
 
 export const isAuth = async (req, res) => {
   try {
-    const {userId} = req.body; 
+    const { id: userId } = req.user; 
 
     if (!userId) {
         return res.json({ success: false, message: "Unauthorized" });
@@ -109,10 +109,14 @@ export const isAuth = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
+  
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: "/",
+
     });
 
     return res.json({ success: true, message: "Logged out successfully" });

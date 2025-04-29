@@ -42,7 +42,7 @@ export const productList = async (req, res)=>{
 
     } catch (error) {
         console.log(error.message);
-        res .json({
+        res.json({
             success: false,
             message: "Product not found",
         })
@@ -59,7 +59,7 @@ export const productById = async (req, res)=>{
         })
     } catch (error) {
         console.log(error.message);
-        res .json({
+        res.json({
             success: false,
             message: "Product not found",
         })
@@ -76,7 +76,7 @@ export const changeStock = async (req, res)=>{
         })
     } catch (error) {
         console.log(error.message);
-        res .json({
+        res.json({
             success: false,
             message: "Product not found",
         })

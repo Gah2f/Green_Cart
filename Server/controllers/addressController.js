@@ -2,10 +2,10 @@ import Address from "../models/Address.js";
 
 export const addAddress = async (req, res) =>{
     try {
-        const { userId, address } = req.body;
+        const { address } = req.body;
 
      await Address.create({
-            userId,
+            userId: req.user.id,
             ...address
         })
 
@@ -25,12 +25,12 @@ export const addAddress = async (req, res) =>{
 
 export const getAddress = async (req, res)=>{
     try {
-        const { userId } = req.body;
-        const address = await Address.find({userId});
+        const userId  = req.user.id;
+        const addresses = await Address.find({userId});
 
         res.json({
             success: true,
-            address: address,
+            addresses: addresses,
         })
     } catch (error) {
         console.log(error.message);

@@ -10,11 +10,11 @@ const productSchema = new mongoose.Schema({
         required: true,
     }, 
     price : {
-        type: number,
+        type: Number,
         required: true,
     },
     offerPrice: {
-        type: number,
+        type: Number,
         required: true,
     },
     image: {
@@ -22,7 +22,7 @@ const productSchema = new mongoose.Schema({
         required: true,
     },
     category: {
-        type: Array,
+        type: String,
         required: true,
     },
     inStock: {
