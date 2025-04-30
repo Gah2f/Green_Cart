@@ -21,7 +21,7 @@ function Categories() {
             <img
               src={singleCategoy.image}
               alt={singleCategoy.text}
-              className="group-hover:scale-105 transition max-w-[28]"
+              className="group-hover:scale-105 transition "
             />
             <p className="text-sm font-medium">{singleCategoy.text}</p>
           </div>
