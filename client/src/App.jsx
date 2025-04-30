@@ -18,7 +18,7 @@ import AddProduct from "./pages/Seller/AddProduct";
 import ProductList from "./pages/Seller/ProductList";
 import Orders from "./pages/Seller/Orders";
 import Loading from "./components/Loading";
-import Contact from "./pages/Contact";
+import Contact from "./pages/Contact.jsx";
 
 function App() {
   const isSellerPath = useLocation().pathname.includes("seller");
