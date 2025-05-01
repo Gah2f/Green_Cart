@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useAppContext } from "../context/AppContext";
 import { useLocation } from "react-router-dom";
+import { assets } from "../assets/greencart_assets/assets";
 
 function Loading() {
     const { navigate } = useAppContext();
@@ -17,9 +18,21 @@ function Loading() {
         }
     },[nextUrl])
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="animate-spin rounded-full h-24 w-24 border-4 border-gray-300 border-t-primary"> </div>
+    // <div className="flex justify-center items-center h-screen">
+    //   <div className="animate-spin rounded-full h-24 w-24 border-4 border-gray-300 border-t-primary"> </div>
+    // </div>
+
+    <div className="flex items-center justify-center h-screen bg-primary-dull">
+    <div className="relative w-24 h-24 animate-spin-slow">
+      <img
+        src={assets.pizza_img}
+        alt="Loading..."
+        className="w-full h-full"
+      />
+      <div className="absolute inset-0 rounded-full border-4 border-dashed border-yellow-400 animate-spin"></div>
     </div>
+    <p className="ml-4 text-xl font-bold text-orange-600 animate-pulse">Baking your order...</p>
+  </div>
   );
 }
 
