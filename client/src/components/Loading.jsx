@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useAppContext } from "../context/AppContext";
 import { useLocation } from "react-router-dom";
-import { assets } from "../assets/greencart_assets/assets";
+import loaderImg from '../assets/greencart_assets/cropped_image.png'
 
 function Loading() {
     const { navigate } = useAppContext();
@@ -25,7 +25,7 @@ function Loading() {
     <div className="flex items-center justify-center h-screen bg-primary-dull">
     <div className="relative w-24 h-24 animate-spin-slow">
       <img
-        src={assets.pizza_img}
+        src={loaderImg}
         alt="Loading..."
         className="w-full h-full"
       />
